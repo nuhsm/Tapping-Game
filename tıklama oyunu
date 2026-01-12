@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gelişmiş Emoji Avı</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle, #1a1a2e, #000000);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            user-select: none;
+            touch-action: none;
+        }
+
+        /* Ortak Panel Tasarımı (Sarıdan Siyaha Gradyan) */
+        .panel {
+            padding: 10px 20px;
+            border-radius: 15px; /* Yumuşatılmış kenarlar */
+            background: linear-gradient(135deg, #ffd700 0%, #332b00 50%, #000000 100%);
+            border: 1px solid #ffd700;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            font-weight: bold;
+            position: absolute;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        /* Süre Paneli - Üstte Sabit */
+        #sure-panel {
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+        }
+
+        /* Skor Paneli - Sol Alt Köşe */
+        #skor-panel {
+            bottom: 20px;
+            left: 20px;
+            color: #fff;
+        }
+
+        /* Tıklanacak Hedef */
+        #hedef {
+            width: 80px;
+            height: 80px;
+            background-color: #ff3366;
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px #ff3366;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.1s active;
+            /* İlk başlangıç pozisyonu: Alt Orta */
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sure-panel" class="panel">SÜRE: 30</div>
+    <div id="skor-panel" class="panel">SKOR: 0</div>
+
+    <div id="hedef">TIKLA</div>
+
+    <script>
+        let skor = 0;
+        let kalanSure = 30;
+        let oyunDevamEdiyor = true;
+
+        const hedef = document.getElementById('hedef');
+        const skorYazisi = document.getElementById('skor-panel');
+        const sureYazisi = document.getElementById('sure-panel');
+
+        function pozisyonuDegistir() {
+            // Panel alanlarına çarpmaması için güvenli alan hesapla
+            const x = Math.random() * (window.innerWidth - 100) + 10;
+            const y = Math.random() * (window.innerHeight - 250) + 120;
+            
+            // Başlangıçtaki "transform: translateX(-50%)" özelliğini 
+            // rastgele hareket için devre dışı bırakıp serbest konuma geçiyoruz
+            hedef.style.bottom = 'auto'; 
+            hedef.style.left = x + 'px';
+            hedef.style.top = y + 'px';
+            hedef.style.transform = 'none';
+        }
+
+        hedef.addEventListener('touchstart', function(e) {
+            if(!oyunDevamEdiyor) return;
+            
+            skor++;
+            skorYazisi.innerText = "SKOR: " + skor;
+            pozisyonuDegistir();
+            
+            // Tıklama efekti
+            hedef.style.transform = "scale(0.9)";
+            setTimeout(() => { if(oyunDevamEdiyor) hedef.style.transform = "scale(1)"; }, 100);
+        });
+
+        const sayac = setInterval(() => {
+            kalanSure--;
+            sureYazisi.innerText = "SÜRE: " + kalanSure;
+            
+            if(kalanSure <= 0) {
+                clearInterval(sayac);
+                oyunDevamEdiyor = false;
+                hedef.style.display = 'none';
+                alert("Oyun Bitti! Skorun: " + skor);
+                location.reload();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
